@@ -1,0 +1,66 @@
+﻿cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
+  xmlparse.c
+src\expat-2.2.0\xmlparse.c(725): warning C4311: 'type cast': pointer truncation from 'XML_Parser' to 'unsigned long'
+  xmlrole.c
+  xmltok.c
+  xmltok_impl.c
+  xmltok_ns.c
+  adler32.c
+  compress.c
+  crc32.c
+  deflate.c
+  gzclose.c
+  gzlib.c
+  gzread.c
+  gzwrite.c
+  infback.c
+  inffast.c
+  inflate.c
+  inftrees.c
+  trees.c
+  uncompr.c
+  zutil.c
+cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
+  MSObject.cpp
+src\MSToolkit\MSObject.cpp(112): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  MSReader.cpp
+src\MSToolkit\MSReader.cpp(1724): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+src\MSToolkit\MSReader.cpp(1810): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+src\MSToolkit\MSReader.cpp(2280): warning C4244: '=': conversion from '__int64' to 'unsigned int', possible loss of data
+  mzMLWriter.cpp
+src\MSToolkit\mzMLWriter.cpp(321): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(325): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(326): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(336): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(340): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(341): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(430): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(434): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(435): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(445): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(449): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(450): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+src\MSToolkit\mzMLWriter.cpp(511): warning C4101: 'tmp': unreferenced local variable
+src\MSToolkit\mzMLWriter.cpp(554): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 3 has type 'std::size_t'
+  src\MSToolkit\mzMLWriter.cpp(554): note: consider using '%zd' in the format string
+  RAWReader.cpp
+  Spectrum.cpp
+  BasicChromatogram.cpp
+  BasicSpectrum.cpp
+  Czran.cpp
+src\mzParser\Czran.cpp(162): warning C4267: '=': conversion from 'size_t' to 'uInt', possible loss of data
+src\mzParser\Czran.cpp(297): warning C4267: '=': conversion from 'size_t' to 'uInt', possible loss of data
+  MSNumpress.cpp
+  mz5handler.cpp
+  mzMLReader.cpp
+  mzParser.cpp
+  mzpMz5Config.cpp
+  mzpMz5Structs.cpp
+  mzp_base64.cpp
+  PWIZface.cpp
+  RAMPface.cpp
+  saxhandler.cpp
+  saxmzmlhandler.cpp
+  saxmzxmlhandler.cpp
+src\mzParser\saxmzxmlhandler.cpp(155): warning C4800: 'const char *': forcing value to bool 'true' or 'false' (performance warning)
+  MSToolkitLite.vcxproj -> C:\Users\alaguillog\Documents\Comet-PTM-Delta-2018\x64\Release\MSToolkitLite.lib
