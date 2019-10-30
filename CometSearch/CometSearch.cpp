@@ -3067,6 +3067,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
    iLenPeptide = iEndPos - iStartPos + 1;
    
    int iArraySize = sizeof(int)*pQuery->_spectrumInfoInternal.iArraySize;
+   double dXcorrCorr;
 
    if (iLenPeptide >= MAX_PEPTIDE_LEN)
       return;
@@ -3097,7 +3098,26 @@ void CometSearch::StorePeptide(int iWhichQuery,
             = (iLenPeptide-1)*g_staticParams.ionInformation.iNumIonSeriesUsed;
       }
 
-      pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
+      //pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
+      
+      if (g_staticParams.options.bUseXcorrCorr)
+      {
+          if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
+          {
+              dXcorrCorr = log10(dXcorr) / log10(2*iLenPeptide/110);
+          }
+          else // R = 1.22
+          {
+              dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
+          }
+          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorrCorr;
+          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr_nosort = (float)dXcorr;
+      }
+      else
+      {
+          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
+      }
+      
       pQuery->_pDecoys[siLowestDecoySpScoreIndex].fNonModXcorr = (float)dNonModXcorr;
       if (g_staticParams.options.bUseDeltaClosest)
       {
@@ -3273,7 +3293,26 @@ void CometSearch::StorePeptide(int iWhichQuery,
             = (iLenPeptide-1)*g_staticParams.ionInformation.iNumIonSeriesUsed;
       }
 
-      pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
+      //pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
+      
+      if (g_staticParams.options.bUseXcorrCorr)
+      {
+          if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
+          {
+              dXcorrCorr = log10(dXcorr) / log10(2*iLenPeptide/110);
+          }
+          else // R = 1.22
+          {
+              dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
+          }
+          pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorrCorr;
+          pQuery->_pResults[siLowestSpScoreIndex].fXcorr_nosort = (float)dXcorr;
+      }
+      else
+      {
+          pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
+      }
+      
       pQuery->_pResults[siLowestSpScoreIndex].fNonModXcorr = (float)dNonModXcorr;
       if (g_staticParams.options.bUseDeltaClosest)
       {
