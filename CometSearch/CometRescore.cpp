@@ -118,12 +118,10 @@ void CometRescore::RescorePeptides(int iQueryIndex)
        {
             int bestPosClosest = -1;
             double dXcorrClosest;
-            double dXcorrCorrClosest;
             double dBestXcorr;
             
             // Vectors to store the results for each deltamass
             std::vector<double> vdXcorrClosest;
-            std::vector<double> vdXcorrCorrClosest;
             std::vector<double> vdBestXcorr;
             //std::vector<std::string> vszXcorrProfileClosest;
             //std::vector<std::string> vszXcorrProfileBClosest;
@@ -143,11 +141,6 @@ void CometRescore::RescorePeptides(int iQueryIndex)
             int iProteinSeqLengthMinus1 = pQuery->_pResults[i].vcProteinSeq.size() - 1;
             int iModPos = pQuery->_pResults[i].iModPos;
             float fXcorr = pQuery->_pResults[i].fXcorr;
-            if (g_staticParams.options.bUseXcorrCorr)
-            {
-               fXcorr = pQuery->_pResults[i].fXcorr_nosort;
-               float fXcorrCorr = pQuery->_pResults[i].fXcorr;
-            }
             double dDeltaXcorrMass = pQuery->_pResults[i].dDeltaXcorrMass;
             std::vector<char> vzProteinSeq = pQuery->_pResults[i].vcProteinSeq;
             char* szProteinSeq = reinterpret_cast<char*>(vzProteinSeq.data());
@@ -421,65 +414,28 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                       //szXcorrProfileYClosest = "0";
                    }
                    
-                   if (g_staticParams.options.bUseXcorrCorr) // fXcorr is the corrected value
+                   if (fXcorr > dXcorrClosest)
                    {
-                      if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
-                      {
-                         dXcorrCorrClosest = log10(dXcorrClosest) / log10(2*pQuery->_pResults[i].iLenPeptide/110);
-                      }
-                      else // R = 1.22
-                      {
-                         dXcorrCorrClosest = log10(dXcorrClosest/1.22) / log10(2*pQuery->_pResults[i].iLenPeptide/110);
-                      }
-                      if (!g_staticParams.options.bUseDeltaClosest || dDeltaXcorrMassClosest == -9999)
-                         dXcorrCorrClosest = 0;
-                      if (fXcorr > dXcorrCorrClosest)
-                      {
-                         dBestXcorr = fXcorr;
-                         szXcorrType = "experimental";
-                         viBestPosClosest.push_back(iModPos); // Keep previous position
-                      }
-                      else if (fXcorr == dXcorrCorrClosest)
-                      {
-                         dBestXcorr = fXcorr;
-                         szXcorrType = "same";
-                         viBestPosClosest.push_back(iModPos); // Keep previous position
-                      }
-                      else if (fXcorr < dXcorrCorrClosest)
-                      {
-                         dBestXcorr = dXcorrCorrClosest;
-                         szXcorrType = "theoretical";
-                         viBestPosClosest.push_back(bestPosClosest); // Update position
-                      }
+                      dBestXcorr = fXcorr;
+                      szXcorrType = "experimental";
+                      viBestPosClosest.push_back(iModPos); // Keep previous position
                    }
-                   
-                   else // Proceed as usual, fXcorr is the regular xcorr
+                   else if (fXcorr == dXcorrClosest)
                    {
-                      if (fXcorr > dXcorrClosest)
-                      {
-                         dBestXcorr = fXcorr;
-                         szXcorrType = "experimental";
-                         viBestPosClosest.push_back(iModPos); // Keep previous position
-                      }
-                      else if (fXcorr == dXcorrClosest)
-                      {
-                         dBestXcorr = fXcorr;
-                         szXcorrType = "same";
-                         viBestPosClosest.push_back(iModPos); // Keep previous position
-                      }
-                      else if (fXcorr < dXcorrClosest)
-                      {
-                         dBestXcorr = dXcorrClosest;
-                         szXcorrType = "theoretical";
-                         viBestPosClosest.push_back(bestPosClosest); // Update position
-                      }
+                      dBestXcorr = fXcorr;
+                      szXcorrType = "same";
+                      viBestPosClosest.push_back(iModPos); // Keep previous position
+                   }
+                   else if (fXcorr < dXcorrClosest)
+                   {
+                      dBestXcorr = dXcorrClosest;
+                      szXcorrType = "theoretical";
+                      viBestPosClosest.push_back(bestPosClosest); // Update position
                    }
                 }
 
                 // Add results from XcorrScore() to the output vectors
                 vdXcorrClosest.push_back(dXcorrClosest);
-                if (g_staticParams.options.bUseXcorrCorr)
-                   vdXcorrCorrClosest.push_back(dXcorrCorrClosest);
                 vdBestXcorr.push_back(dBestXcorr);
                 //vszXcorrProfileClosest.push_back(szXcorrProfileClosest);
                 //vszXcorrProfileBClosest.push_back(szXcorrProfileBClosest);
@@ -487,71 +443,33 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                 vszXcorrType.push_back(szXcorrType);
             }
 
-            if (g_staticParams.options.bUseXcorrCorr) // Use corrected Xcorr
+            if (!vdXcorrClosest.empty())
             {
-                if (!vdXcorrClosest.empty())
-                {
-                // Get index of highest scoring theoretical deltamass
-                std::vector<double>::iterator best_score = max_element(vdXcorrClosest.begin(), vdXcorrClosest.end());
-                int best_index = std::distance(vdXcorrClosest.begin(), best_score);
-                
+               // Get index of highest scoring theoretical deltamass
+               std::vector<double>::iterator best_score = max_element(vdXcorrClosest.begin(), vdXcorrClosest.end());
+               int best_index = std::distance(vdXcorrClosest.begin(), best_score);
+
                 // Get all results for the candidate with that deltamass
-                double dDeltaXcorrMassClosest = vClosest[best_index];
-                double dXcorrClosest = vdXcorrClosest[best_index];
-                double dBestXcorr = vdBestXcorr[best_index];
-                //std::string szXcorrProfileClosest = vszXcorrProfileClosest[best_index];
-                //std::string szXcorrProfileBClosest = vszXcorrProfileBClosest[best_index];
-                //std::string szXcorrProfileYClosest = vszXcorrProfileYClosest[best_index];
-                std::string szXcorrType = vszXcorrType[best_index];
-                int iBestPos = viBestPosClosest[best_index];
-                
-                if (g_staticParams.options.iDecoySearch != 2)
-                {
-                    // Store results
-                    pQuery->_pResults[i].dDeltaXcorrMassClosest = dDeltaXcorrMassClosest;
-                    pQuery->_pResults[i].fXcorrClosest = (float)dXcorrClosest;
-                    pQuery->_pResults[i].fXcorrCorrClosest = (float)dXcorrCorrClosest;
-                    pQuery->_pResults[i].fBestXcorr = (float)dBestXcorr;
-                    pQuery->_pResults[i].iModPos = iBestPos;
-                    //pQuery->_pResults[i].szXcorrProfileClosest = szXcorrProfileClosest;
-                    //pQuery->_pResults[i].szXcorrProfileBClosest = szXcorrProfileBClosest;
-                    //pQuery->_pResults[i].szXcorrProfileYClosest = szXcorrProfileYClosest;
-                    strcpy(pQuery->_pResults[i].szXcorrType, const_cast<char*>(szXcorrType.c_str()));
-                    }
-                }
-            }
-            else // Proceed as usual
-            {
-                if (!vdXcorrClosest.empty())
-                {
-                // Get index of highest scoring (xcorr_corr) theoretical deltamass
-                std::vector<double>::iterator best_score = max_element(vdXcorrCorrClosest.begin(), vdXcorrCorrClosest.end());
-                int best_index = std::distance(vdXcorrCorrClosest.begin(), best_score);
-                
-                // Get all results for the candidate with that deltamass
-                double dDeltaXcorrMassClosest = vClosest[best_index];
-                double dXcorrClosest = vdXcorrClosest[best_index];
-                double dXcorrCorrClosest = vdXcorrCorrClosest[best_index];
-                double dBestXcorr = vdBestXcorr[best_index];
-                //std::string szXcorrProfileClosest = vszXcorrProfileClosest[best_index];
-                //std::string szXcorrProfileBClosest = vszXcorrProfileBClosest[best_index];
-                //std::string szXcorrProfileYClosest = vszXcorrProfileYClosest[best_index];
-                std::string szXcorrType = vszXcorrType[best_index];
-                int iBestPos = viBestPosClosest[best_index];
-                
-                    if (g_staticParams.options.iDecoySearch != 2)
-                    {
-                        // Store results
-                        pQuery->_pResults[i].dDeltaXcorrMassClosest = dDeltaXcorrMassClosest;
-                        pQuery->_pResults[i].fXcorrClosest = (float)dXcorrClosest;
-                        pQuery->_pResults[i].fXcorrCorrClosest = (float)dXcorrCorrClosest;
-                        pQuery->_pResults[i].fBestXcorr = (float)dBestXcorr;
-                        pQuery->_pResults[i].iModPos = iBestPos;
-                        //pQuery->_pResults[i].szXcorrProfileClosest = szXcorrProfileClosest;
-                        //pQuery->_pResults[i].szXcorrProfileBClosest = szXcorrProfileBClosest;
-                        //pQuery->_pResults[i].szXcorrProfileYClosest = szXcorrProfileYClosest;
-                        strcpy(pQuery->_pResults[i].szXcorrType, const_cast<char*>(szXcorrType.c_str()));
-                    }
+               double dDeltaXcorrMassClosest = vClosest[best_index];
+               double dXcorrClosest = vdXcorrClosest[best_index];
+               double dBestXcorr = vdBestXcorr[best_index];
+               //std::string szXcorrProfileClosest = vszXcorrProfileClosest[best_index];
+               //std::string szXcorrProfileBClosest = vszXcorrProfileBClosest[best_index];
+               //std::string szXcorrProfileYClosest = vszXcorrProfileYClosest[best_index];
+               std::string szXcorrType = vszXcorrType[best_index];
+               int iBestPos = viBestPosClosest[best_index];
+               
+               if (g_staticParams.options.iDecoySearch != 2)
+               {
+                  // Store results
+                  pQuery->_pResults[i].dDeltaXcorrMassClosest = dDeltaXcorrMassClosest;
+                  pQuery->_pResults[i].fXcorrClosest = (float)dXcorrClosest;
+                  pQuery->_pResults[i].fBestXcorr = (float)dBestXcorr;
+                  pQuery->_pResults[i].iModPos = iBestPos;
+                  //pQuery->_pResults[i].szXcorrProfileClosest = szXcorrProfileClosest;
+                  //pQuery->_pResults[i].szXcorrProfileBClosest = szXcorrProfileBClosest;
+                  //pQuery->_pResults[i].szXcorrProfileYClosest = szXcorrProfileYClosest;
+                  strcpy(pQuery->_pResults[i].szXcorrType, const_cast<char*>(szXcorrType.c_str()));
                 }
             }
             
