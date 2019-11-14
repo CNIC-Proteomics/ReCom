@@ -43,6 +43,8 @@ public:
    static void AnalyzeSP(int i);
    static int QSortFnXcorr(const void *a,
                            const void *b);
+   static int QSortFnXcorrCorr(const void *a,
+                               const void *b);
 private:
    static void CalculateSP(Results *pOutput,
                            int iWhichQuery,

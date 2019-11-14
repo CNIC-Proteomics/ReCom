@@ -495,6 +495,20 @@ int CometPostAnalysis::QSortFnXcorr(const void *a,
       return 0;
 }
 
+int CometPostAnalysis::QSortFnXcorrCorr(const void *a,
+                                        const void *b)
+{
+   struct Results *ia = (struct Results *)a;
+   struct Results *ib = (struct Results *)b;
+
+   if (ia->fXcorrCorr < ib->fXcorrCorr)
+      return 1;
+   else if (ia->fXcorrCorr > ib->fXcorrCorr)
+      return -1;
+   else
+      return 0;
+}
+
 
 int CometPostAnalysis::QSortFnPep(const void *a,
                                   const void *b)
