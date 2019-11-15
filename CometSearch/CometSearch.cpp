@@ -3098,7 +3098,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
             = (iLenPeptide-1)*g_staticParams.ionInformation.iNumIonSeriesUsed;
       }
 
-      //pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
+      pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
       
       if (g_staticParams.options.bUseXcorrCorr)
       {
@@ -3110,12 +3110,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
           {
               dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
           }
-          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorrCorr;
-          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr_nosort = (float)dXcorr;
-      }
-      else
-      {
-          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorr = (float)dXcorr;
+          pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorrCorr = (float)dXcorrCorr;
       }
       
       pQuery->_pDecoys[siLowestDecoySpScoreIndex].fNonModXcorr = (float)dNonModXcorr;
@@ -3293,7 +3288,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
             = (iLenPeptide-1)*g_staticParams.ionInformation.iNumIonSeriesUsed;
       }
 
-      //pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
+      pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
       
       if (g_staticParams.options.bUseXcorrCorr)
       {
@@ -3305,12 +3300,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
           {
               dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
           }
-          pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorrCorr;
-          pQuery->_pResults[siLowestSpScoreIndex].fXcorr_nosort = (float)dXcorr;
-      }
-      else
-      {
-          pQuery->_pResults[siLowestSpScoreIndex].fXcorr = (float)dXcorr;
+          pQuery->_pResults[siLowestSpScoreIndex].fXcorrCorr = (float)dXcorrCorr;
       }
       
       pQuery->_pResults[siLowestSpScoreIndex].fNonModXcorr = (float)dNonModXcorr;

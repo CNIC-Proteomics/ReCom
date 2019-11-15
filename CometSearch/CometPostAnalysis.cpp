@@ -138,7 +138,7 @@ void CometPostAnalysis::AnalyzeSP(int i)
          pQuery->_pResults[ii].iRankSp = pQuery->_pResults[ii-1].iRankSp + 1;
    }
 
-   // Then sort each entry by xcorr
+   // Then sort each entry by xcorr // TODO or by xcorr corr IF the option has been set
    qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorr);
 
    // Need to sort by peptide sequence now for those entries that have same xcorr value.
