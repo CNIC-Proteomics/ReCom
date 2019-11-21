@@ -465,12 +465,12 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                {
                   if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
                   {
-                     dXcorrCorrClosest = log10(fXcorr) / log10(2*(iEndPos - iStartPos + 1)/110);
+                     dXcorrCorrClosest = log10(fXcorr) / log10(2*((float)iEndPos - (float)iStartPos + 1)/110);
                   }
                   else // R = 1.22
                   {
                      float fXcorr_R = fXcorr/1.22;
-                     dXcorrCorrClosest = log10(fXcorr_R) / log10(2*(iEndPos - iStartPos + 1)/110);
+                     dXcorrCorrClosest = log10(fXcorr_R) / log10(2*((float)iEndPos - (float)iStartPos + 1)/110);
                   }
                }
                
