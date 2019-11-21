@@ -121,6 +121,8 @@ void CometWriteTxt::PrintTxtHeader(FILE *fpout)
          fprintf(fpout, "\t");
          fprintf(fpout, "Closest_Deltamass\t");
          fprintf(fpout, "Closest_Xcorr\t");
+         if (g_staticParams.options.bUseXcorrCorr)
+            fprintf(fpout, "Closest_Xcorr_corr\t");
          fprintf(fpout, "Best_Xcorr\t");
          fprintf(fpout, "Xcorr_Type");
       }
@@ -599,10 +601,21 @@ void CometWriteTxt::PrintResults(int iWhichQuery,
                {
                   fprintf(fpout, "%s\t", to_string(pOutput[iWhichResult].dDeltaXcorrMassClosest).c_str());
                   fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrClosest);
-                  if (pOutput[iWhichResult].fXcorr >= pOutput[iWhichResult].fXcorrClosest)
-                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
+                  if (g_staticParams.options.bUseXcorrCorr)
+                  {
+                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorrClosest);
+                     if (pOutput[iWhichResult].fXcorrCorr >= pOutput[iWhichResult].fXcorrCorrClosest)
+                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorr);
+                     else
+                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorrClosest);
+                  }
                   else
-                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrClosest);
+                  {
+                     if (pOutput[iWhichResult].fXcorr >= pOutput[iWhichResult].fXcorrClosest)
+                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
+                     else
+                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrClosest);
+                  }
                   fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
                }
             }

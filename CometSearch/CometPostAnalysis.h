@@ -58,6 +58,8 @@ private:
                          const void *b);
    static int QSortFnMod(const void *a,
                          const void *b);
+   static int QSortFnNonMod(const void *a,
+                            const void *b);
    static bool CalculateEValue(int iWhichQuery);
    static bool GenerateXcorrDecoys(int iWhichQuery);
    static void LinearRegression(int *pHistogram,

@@ -142,7 +142,7 @@ void CometPostAnalysis::AnalyzeSP(int i)
    if (!g_staticParams.options.bUseXcorrCorr)
       qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorr);
    else // Or by corrected xcorr if the option has been set
-      qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorrCorr);
+      qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorrCorr); // TODO reorder same xcorr, nonmod first // make QsortFnNonMod?
 
    // Need to sort by peptide sequence now for those entries that have same xcorr value.
    // This will address peptides with I/L differences but same xcorr showing up
@@ -569,7 +569,7 @@ int CometPostAnalysis::QSortFnXcorr(const void *a,
       return 0;
 }
 
-int CometPostAnalysis::QSortFnXcorrCorr(const void *a,
+int CometPostAnalysis::QSortFnXcorrCorr(const void *a,  // ReCom
                                         const void *b)
 {
    struct Results *ia = (struct Results *)a;
@@ -611,6 +611,20 @@ int CometPostAnalysis::QSortFnMod(const void *a,
          return 1;
    }
    return 0;
+}
+
+int CometPostAnalysis::QSortFnNonMod(const void *a,
+                                     const void *b)
+{
+   struct Results *ia = (struct Results *)a;
+   struct Results *ib = (struct Results *)b;
+   
+   // reorder same xcorr, nonmod first
+   // 1. check if same xcorr should be done outside of this
+   // 2. check if one is nonmod and other mod
+   // put nonmod first
+   
+   return;
 }
 
 
