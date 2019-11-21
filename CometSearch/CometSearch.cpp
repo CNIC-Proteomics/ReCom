@@ -3302,9 +3302,6 @@ void CometSearch::StorePeptide(int iWhichQuery,
               double dXcorr_R = dXcorr/1.22;
               dXcorrCorr = log10((float)dXcorr_R) / log10(2*iLenPeptide/110);
           }
-          char test[100];
-          sprintf(test, "dXcorrCorr = %f", dXcorrCorr);
-          logout(test);
           pQuery->_pResults[siLowestSpScoreIndex].fXcorrCorr = (float)dXcorrCorr;
       }
       
