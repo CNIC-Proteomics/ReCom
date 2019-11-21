@@ -91,6 +91,8 @@ void CometWriteTxt::PrintTxtHeader(FILE *fpout)
    fprintf(fpout, "calc_neutral_mass\t");
    fprintf(fpout, "e-value\t");
    fprintf(fpout, "xcorr\t");
+   if (g_staticParams.options.bUseXcorrCorr)
+      fprintf(fpout, "xcorr_corr\t");
    fprintf(fpout, "delta_cn\t");
    fprintf(fpout, "sp_score\t");
    fprintf(fpout, "ions_matched\t");
@@ -423,6 +425,8 @@ void CometWriteTxt::PrintResults(int iWhichQuery,
          fprintf(fpout, "%0.6f\t", pOutput[iWhichResult].dPepMass - PROTON_MASS);
          fprintf(fpout, "%0.2E\t", pOutput[iWhichResult].dExpect);
          fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorr);
+         if (g_staticParams.options.bUseXcorrCorr)
+            fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrCorr);
          fprintf(fpout, "%0.4f\t", dDeltaCn);
          fprintf(fpout, "%0.1f\t", pOutput[iWhichResult].fScoreSp);
          fprintf(fpout, "%d\t", pOutput[iWhichResult].iMatchedIons);
