@@ -597,9 +597,18 @@ void CometWriteTxt::PrintResults(int iWhichQuery,
             {
                if (pOutput[iWhichResult].dDeltaXcorrMassClosest == -9999)
                {
-                  fprintf(fpout, "%s\t%s\t", "N/A", "N/A");
-                  fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
-                  fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                  if (g_staticParams.options.bUseXcorrCorr)
+                  {
+                     fprintf(fpout, "%s\t%s\t%s\t", "N/A", "N/A", "N/A");
+                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorr);
+                     fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                  }
+                  else
+                  {
+                     fprintf(fpout, "%s\t%s\t", "N/A", "N/A");
+                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
+                     fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                  }
                }
                else
                {
