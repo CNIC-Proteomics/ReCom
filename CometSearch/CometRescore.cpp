@@ -469,7 +469,8 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                   }
                   else // R = 1.22
                   {
-                     dXcorrCorrClosest = log10(fXcorr/1.22) / log10(2*(iEndPos - iStartPos + 1)/110);
+                     float fXcorr_R = fXcorr/1.22;
+                     dXcorrCorrClosest = log10(fXcorr_R) / log10(2*(iEndPos - iStartPos + 1)/110);
                   }
                }
                

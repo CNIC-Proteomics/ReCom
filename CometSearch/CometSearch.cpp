@@ -3104,11 +3104,12 @@ void CometSearch::StorePeptide(int iWhichQuery,
       {
           if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
           {
-              dXcorrCorr = log10(dXcorr) / log10(2*iLenPeptide/110);
+              dXcorrCorr = log10((float)dXcorr) / log10(2*iLenPeptide/110);
           }
           else // R = 1.22
           {
-              dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
+              double dXcorr_R = dXcorr/1.22;
+              dXcorrCorr = log10((float)dXcorr_R) / log10(2*iLenPeptide/110);
           }
           pQuery->_pDecoys[siLowestDecoySpScoreIndex].fXcorrCorr = (float)dXcorrCorr;
       }
@@ -3294,12 +3295,16 @@ void CometSearch::StorePeptide(int iWhichQuery,
       {
           if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
           {
-              dXcorrCorr = log10(dXcorr) / log10(2*iLenPeptide/110);
+              dXcorrCorr = log10((float)dXcorr) / log10(2*iLenPeptide/110);
           }
           else // R = 1.22
           {
-              dXcorrCorr = log10(dXcorr/1.22) / log10(2*iLenPeptide/110);
+              double dXcorr_R = dXcorr/1.22;
+              dXcorrCorr = log10((float)dXcorr_R) / log10(2*iLenPeptide/110);
           }
+          char test[100];
+          sprintf(test, "dXcorrCorr = %f", dXcorrCorr);
+          logout(test);
           pQuery->_pResults[siLowestSpScoreIndex].fXcorrCorr = (float)dXcorrCorr;
       }
       
