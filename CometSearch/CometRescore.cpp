@@ -459,11 +459,28 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                std::string szXcorrType = vszXcorrType[best_index];
                int iBestPos = viBestPosClosest[best_index];
                
+               // Calculate corrected Xcorr
+               double dXcorrCorrClosest;
+               if (g_staticParams.options.bUseXcorrCorr)
+               {
+                  if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
+                  {
+                     dXcorrCorrClosest = log10(fXcorr) / log10(2*((float)iEndPos - (float)iStartPos + 1)/110);
+                  }
+                  else // R = 1.22
+                  {
+                     float fXcorr_R = fXcorr/1.22;
+                     dXcorrCorrClosest = log10(fXcorr_R) / log10(2*((float)iEndPos - (float)iStartPos + 1)/110);
+                  }
+               }
+               
                if (g_staticParams.options.iDecoySearch != 2)
                {
                   // Store results
                   pQuery->_pResults[i].dDeltaXcorrMassClosest = dDeltaXcorrMassClosest;
                   pQuery->_pResults[i].fXcorrClosest = (float)dXcorrClosest;
+                  if (g_staticParams.options.bUseXcorrCorr)
+                     pQuery->_pResults[i].fXcorrCorrClosest = (float)dXcorrCorrClosest;
                   pQuery->_pResults[i].fBestXcorr = (float)dBestXcorr;
                   pQuery->_pResults[i].iModPos = iBestPos;
                   //pQuery->_pResults[i].szXcorrProfileClosest = szXcorrProfileClosest;

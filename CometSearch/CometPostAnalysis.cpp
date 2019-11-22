@@ -139,22 +139,40 @@ void CometPostAnalysis::AnalyzeSP(int i)
    }
 
    // Then sort each entry by xcorr
-   qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorr);
+   if (!g_staticParams.options.bUseXcorrCorr)
+      qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorr);
+   else // Or by corrected xcorr if the option has been set
+      qsort(pQuery->_pResults, iSize, sizeof(struct Results), QSortFnXcorrCorr); // TODO reorder same xcorr, nonmod first // make QsortFnNonMod?
 
    // Need to sort by peptide sequence now for those entries that have same xcorr value.
    // This will address peptides with I/L differences but same xcorr showing up
    // differently in search results.  Or simply different peptides with same xcorr.
    for (int ii=0; ii<iSize; ii++)
    {
-      int j=ii+1;
+      if (!g_staticParams.options.bUseXcorrCorr) // Use Xcorr
+      {
+         int j=ii+1;
 
-      while (j<iSize && (pQuery->_pResults[j].fXcorr == pQuery->_pResults[ii].fXcorr))
-         j++;
+         while (j<iSize && (pQuery->_pResults[j].fXcorr == pQuery->_pResults[ii].fXcorr))
+            j++;
 
-      if (j>ii+1)
-         qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnPep);
+         if (j>ii+1)
+            qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnPep);
 
-      ii=j-1;
+         ii=j-1;
+      }
+      else // Use corrected Xcorr
+      {
+         int j=ii+1;
+
+         while (j<iSize && (pQuery->_pResults[j].fXcorrCorr == pQuery->_pResults[ii].fXcorrCorr)) 
+            j++;
+
+         if (j>ii+1)
+            qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnPep);
+
+         ii=j-1;
+      }
    }
 
    // if mod search, now sort peptides with same score but different mod locations
@@ -162,20 +180,40 @@ void CometPostAnalysis::AnalyzeSP(int i)
    {
       for (int ii=0; ii<iSize; ii++)
       {
-         int j=ii+1;
-
-         // increment j if fXcorr is same and peptide is the same; this implies multiple
-         // different mod forms of this peptide
-         while (j<iSize && (pQuery->_pResults[j].fXcorr == pQuery->_pResults[ii].fXcorr)
-               && !strcmp(pQuery->_pResults[j].szPeptide,  pQuery->_pResults[ii].szPeptide))
+         if (!g_staticParams.options.bUseXcorrCorr) // Use Xcorr
          {
-            j++;
+            int j=ii+1;
+
+            // increment j if fXcorr is same and peptide is the same; this implies multiple
+            // different mod forms of this peptide
+            while (j<iSize && (pQuery->_pResults[j].fXcorr == pQuery->_pResults[ii].fXcorr)
+                  && !strcmp(pQuery->_pResults[j].szPeptide,  pQuery->_pResults[ii].szPeptide))
+            {
+               j++;
+            }
+
+            if (j>ii+1)
+               qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnMod);
+
+            ii=j-1;
          }
+         else // Use XcorrCorr
+         {
+            int j=ii+1;
 
-         if (j>ii+1)
-            qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnMod);
+            // increment j if fXcorrCorr is same and peptide is the same; this implies multiple
+            // different mod forms of this peptide
+            while (j<iSize && (pQuery->_pResults[j].fXcorrCorr == pQuery->_pResults[ii].fXcorrCorr)
+                  && !strcmp(pQuery->_pResults[j].szPeptide,  pQuery->_pResults[ii].szPeptide))
+            {
+               j++;
+            }
 
-         ii=j-1;
+            if (j>ii+1)
+               qsort(pQuery->_pResults + ii, j-ii, sizeof(struct Results), QSortFnMod);
+
+            ii=j-1;
+         }
       }
    }
    // If using ReCom, mark candidates for rescoring
@@ -209,20 +247,38 @@ void CometPostAnalysis::AnalyzeSP(int i)
       }
 
       // Then sort each entry by xcorr
-      qsort(pQuery->_pDecoys, iSize, sizeof(struct Results), QSortFnXcorr);
+      if (!g_staticParams.options.bUseXcorrCorr)
+         qsort(pQuery->_pDecoys, iSize, sizeof(struct Results), QSortFnXcorr);
+      else // Or by corrected xcorr if the option has been set
+         qsort(pQuery->_pDecoys, iSize, sizeof(struct Results), QSortFnXcorrCorr);
 
       // Need to sort by peptide sequence now for those entries that have same xcorr value
       for (int ii=0; ii<iSize; ii++)
       {
-         int j=ii+1;
+         if (!g_staticParams.options.bUseXcorrCorr) // Use Xcorr
+         {
+            int j=ii+1;
 
-         while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorr))
-            j++;
+            while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorr))
+               j++;
 
-         if (j>ii+1)
-            qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnPep);
+            if (j>ii+1)
+               qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnPep);
 
-         ii=j-1;
+            ii=j-1;
+         }
+         else // Use corrected Xcorr
+         {
+            int j=ii+1;
+
+            while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorrCorr))
+               j++;
+
+            if (j>ii+1)
+               qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnPep);
+
+            ii=j-1;
+         }
       }
 
       // if mod search, now sort peptides with same score but different mod locations
@@ -230,18 +286,36 @@ void CometPostAnalysis::AnalyzeSP(int i)
       {
          for (int ii=0; ii<iSize; ii++)
          {
-            int j=ii+1;
-
-            while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorr)
-                  && !strcmp(pQuery->_pDecoys[j].szPeptide, pQuery->_pDecoys[ii].szPeptide))
+            if (!g_staticParams.options.bUseXcorrCorr) // Use Xcorr
             {
-               j++;
+               int j=ii+1;
+
+               while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorr)
+                     && !strcmp(pQuery->_pDecoys[j].szPeptide, pQuery->_pDecoys[ii].szPeptide))
+               {
+                  j++;
+               }
+
+               if (j>ii+1)
+                  qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnMod);
+
+               ii=j-1;
             }
+            else // Use corrected Xcorr
+            {
+               int j=ii+1;
 
-            if (j>ii+1)
-               qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnMod);
+               while (j<iSize && (pQuery->_pDecoys[j].fXcorr == pQuery->_pDecoys[ii].fXcorrCorr)
+                     && !strcmp(pQuery->_pDecoys[j].szPeptide, pQuery->_pDecoys[ii].szPeptide))
+               {
+                  j++;
+               }
 
-            ii=j-1;
+               if (j>ii+1)
+                  qsort(pQuery->_pDecoys + ii, j-ii, sizeof(struct Results), QSortFnMod);
+
+               ii=j-1;
+            }
          }
       }
       // If using ReCom, mark candidates for rescoring
@@ -495,6 +569,20 @@ int CometPostAnalysis::QSortFnXcorr(const void *a,
       return 0;
 }
 
+int CometPostAnalysis::QSortFnXcorrCorr(const void *a,  // ReCom
+                                        const void *b)
+{
+   struct Results *ia = (struct Results *)a;
+   struct Results *ib = (struct Results *)b;
+
+   if (ia->fXcorrCorr < ib->fXcorrCorr)
+      return 1;
+   else if (ia->fXcorrCorr > ib->fXcorrCorr)
+      return -1;
+   else
+      return 0;
+}
+
 
 int CometPostAnalysis::QSortFnPep(const void *a,
                                   const void *b)
@@ -523,6 +611,20 @@ int CometPostAnalysis::QSortFnMod(const void *a,
          return 1;
    }
    return 0;
+}
+
+int CometPostAnalysis::QSortFnNonMod(const void *a,
+                                     const void *b)
+{
+   struct Results *ia = (struct Results *)a;
+   struct Results *ib = (struct Results *)b;
+   
+   // reorder same xcorr, nonmod first
+   // 1. check if same xcorr should be done outside of this
+   // 2. check if one is nonmod and other mod
+   // put nonmod first
+   
+   return;
 }
 
 

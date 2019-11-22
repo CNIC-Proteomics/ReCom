@@ -197,7 +197,7 @@ struct Results
    float  fScoreSp;
    float  fScoreQ;  // Comet-PTM
    float  fXcorr;
-   float  fXcorr_nosort; // ReCom
+   float  fXcorrCorr; // ReCom
    float  fNonModXcorr;
    int    iLenPeptide;
    int    iRankSp;
