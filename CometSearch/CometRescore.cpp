@@ -93,6 +93,9 @@ vector<double> CometRescore::DeltamassCompare(double dDeltaXcorrMass)
 		double dDistance = abs(dMass - dDeltaXcorrMass);
 		if (dDistance <= g_staticParams.tolerances.dDeltaTolerance) // within tolerance
 			vClosest.push_back(dMass);
+        // TODO: Saltitos 2.0 // add a "theoretical_C13" parameter?
+        //  if ((dMass + C13_DIFF - dDeltaXcorrMass) <= g_staticParams.tolerances.dDeltaTolerance) // still within tolerance
+        //     vClosest.push_back(dMass + C13_DIFF); // forward saltito
 	}
 
 	if (vClosest.empty())
@@ -118,6 +121,7 @@ void CometRescore::RescorePeptides(int iQueryIndex)
        {
             int bestPosClosest = -1;
             double dXcorrClosest;
+            double dXcorrCorrClosest;
             double dBestXcorr;
             
             // Vectors to store the results for each deltamass
@@ -417,19 +421,19 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                    if (fXcorr > dXcorrClosest)
                    {
                       dBestXcorr = fXcorr;
-                      szXcorrType = "experimental";
+                      szXcorrType = "experimental"; // TODO
                       viBestPosClosest.push_back(iModPos); // Keep previous position
                    }
                    else if (fXcorr == dXcorrClosest)
                    {
                       dBestXcorr = fXcorr;
-                      szXcorrType = "same";
+                      szXcorrType = "same"; // TODO
                       viBestPosClosest.push_back(iModPos); // Keep previous position
                    }
                    else if (fXcorr < dXcorrClosest)
                    {
                       dBestXcorr = dXcorrClosest;
-                      szXcorrType = "theoretical";
+                      szXcorrType = "theoretical"; // TODO
                       viBestPosClosest.push_back(bestPosClosest); // Update position
                    }
                 }
@@ -460,17 +464,16 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                int iBestPos = viBestPosClosest[best_index];
                
                // Calculate corrected Xcorr
-               double dXcorrCorrClosest;
                if (g_staticParams.options.bUseXcorrCorr)
                {
                   if (pQuery->_spectrumInfoInternal.iChargeState < 3) // R = 1
                   {
-                     dXcorrCorrClosest = log10(fXcorr) / log10(2*((float)iEndPos - (float)iStartPos + 1));
+                     dXcorrCorrClosest = log10(dXcorrClosest) / log10(2*((float)iEndPos - (float)iStartPos + 1));
                   }
                   else // R = 1.22
                   {
-                     float fXcorr_R = fXcorr/1.22;
-                     dXcorrCorrClosest = log10(fXcorr_R) / log10(2*((float)iEndPos - (float)iStartPos + 1));
+                     float dXcorrClosest_R = dXcorrClosest/1.22;
+                     dXcorrCorrClosest = log10(dXcorrClosest_R) / log10(2*((float)iEndPos - (float)iStartPos + 1));
                   }
                }
                
@@ -482,7 +485,7 @@ void CometRescore::RescorePeptides(int iQueryIndex)
                   if (g_staticParams.options.bUseXcorrCorr)
                      pQuery->_pResults[i].fXcorrCorrClosest = (float)dXcorrCorrClosest;
                   pQuery->_pResults[i].fBestXcorr = (float)dBestXcorr;
-                  pQuery->_pResults[i].iModPos = iBestPos;
+                  pQuery->_pResults[i].iModPosClosest = iBestPos;
                   //pQuery->_pResults[i].szXcorrProfileClosest = szXcorrProfileClosest;
                   //pQuery->_pResults[i].szXcorrProfileBClosest = szXcorrProfileBClosest;
                   //pQuery->_pResults[i].szXcorrProfileYClosest = szXcorrProfileYClosest;

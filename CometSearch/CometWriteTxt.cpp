@@ -126,7 +126,8 @@ void CometWriteTxt::PrintTxtHeader(FILE *fpout)
          if (g_staticParams.options.bUseXcorrCorr)
             fprintf(fpout, "Closest_Xcorr_corr\t");
          fprintf(fpout, "Best_Xcorr\t");
-         fprintf(fpout, "Xcorr_Type");
+         //fprintf(fpout, "Xcorr_Type\t"); // TODO
+         fprintf(fpout, "Closest_peptide");
       }
    }
 
@@ -600,36 +601,46 @@ void CometWriteTxt::PrintResults(int iWhichQuery,
                   if (g_staticParams.options.bUseXcorrCorr)
                   {
                      fprintf(fpout, "%s\t%s\t%s\t", "N/A", "N/A", "N/A");
-                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorr);
-                     fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                     fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrCorr);
                   }
                   else
                   {
                      fprintf(fpout, "%s\t%s\t", "N/A", "N/A");
-                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
-                     fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                     fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorr);
                   }
+                  //fprintf(fpout, "%s\t", pOutput[iWhichResult].szXcorrType); // TODO
+                  fprintf(fpout, "%s", "N/A");
                }
                else
                {
                   fprintf(fpout, "%s\t", to_string(pOutput[iWhichResult].dDeltaXcorrMassClosest).c_str());
-                  fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrClosest);
+                  fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrClosest);
                   if (g_staticParams.options.bUseXcorrCorr)
                   {
-                     fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorrClosest);
+                     fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrCorrClosest);
                      if (pOutput[iWhichResult].fXcorrCorr >= pOutput[iWhichResult].fXcorrCorrClosest)
-                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorr);
+                        fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrCorr);
                      else
-                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrCorrClosest);
+                        fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrCorrClosest);
                   }
                   else
                   {
                      if (pOutput[iWhichResult].fXcorr >= pOutput[iWhichResult].fXcorrClosest)
-                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorr);
+                        fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorr);
                      else
-                        fprintf(fpout, "%f\t", pOutput[iWhichResult].fXcorrClosest);
+                        fprintf(fpout, "%0.4f\t", pOutput[iWhichResult].fXcorrClosest);
                   }
-                  fprintf(fpout, "%s", pOutput[iWhichResult].szXcorrType);
+                  //fprintf(fpout, "%s\t", pOutput[iWhichResult].szXcorrType); // TODO
+                  // Closest_peptide
+                  for (int i = 0; i < pOutput[iWhichResult].iLenPeptide; i++)
+                  {
+                     fprintf(fpout, "%c", pOutput[iWhichResult].szPeptide[i]);
+
+                     if (i == pOutput[iWhichResult].iModPosClosest)
+                     {
+                        fprintf(fpout, "[%0.2f]", ((int)(100 * pOutput[iWhichResult].dDeltaXcorrMassClosest) / 100.0));
+                     }
+                  }
                }
             }
          }
