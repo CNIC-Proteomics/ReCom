@@ -221,6 +221,7 @@ struct Results
    char szDeltaBSeries[MAX_PEPTIDE_LEN*2];
    //std::string sDeltaJumps; // "-2", "-1", "0", "+1", "+2"
    int  iModPos;  // position (in the peptide string) of PTM
+   int iModPosClosest; // ReCom
    float fXcorrClosest; // ReCom
    float fXcorrCorrClosest; // ReCom
    float fBestXcorr; // ReCom
