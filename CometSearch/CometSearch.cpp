@@ -3115,6 +3115,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
       }
       
       pQuery->_pDecoys[siLowestDecoySpScoreIndex].fNonModXcorr = (float)dNonModXcorr;
+      pQuery->_pDecoys[siLowestDecoySpScoreIndex].iModPos = iModPos;
       if (g_staticParams.options.bUseDeltaClosest)
       {
          pQuery->_pDecoys[siLowestDecoySpScoreIndex].iModPos = iModPos;
@@ -3306,6 +3307,7 @@ void CometSearch::StorePeptide(int iWhichQuery,
       }
       
       pQuery->_pResults[siLowestSpScoreIndex].fNonModXcorr = (float)dNonModXcorr;
+      pQuery->_pResults[siLowestSpScoreIndex].iModPos = iModPos;
       if (g_staticParams.options.bUseDeltaClosest)
       {
          pQuery->_pResults[siLowestSpScoreIndex].iModPos = iModPos;
